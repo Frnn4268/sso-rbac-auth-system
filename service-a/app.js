@@ -1,12 +1,15 @@
 import express from "express";
-import dotenv from "dotenv";
-import redis from "ioredis";
-dotenv.config();
+import rateLimit from "express-rate-limit";
+import axios from "axios";
+import { createProxyMiddleware } from "http-proxy-middleware";
+import Redis from "ioredis";
 
-const redisClient = redis.createClient({
+// Create a Redis client
+const redisClient = new Redis({
   host: process.env.REDIS_HOST || "127.0.0.1",
   port: process.env.REDIS_PORT || 6379,
 });
+
 
 redisClient.on("error", (error) => {
   console.error("Redis client error:", error);
@@ -17,46 +20,75 @@ redisClient.on("end", () => {
 });
 
 const app = express();
-const errorHandlingMiddleware = (err, req, res, next) => {
-  console.error(err);
-  res.status(err.status || 500).send(err.message || "Internal server error");
-};
+const apiLimiter = rateLimit({
+  windowMs: 60 * 1000, // 1 minute
+  max: 100, // limit each IP to 100 requests per windowMs
+  message: "Too many requests, please try again later.",
+});
+app.use(apiLimiter);
 
-app.use(async (req, res, next) => {
-  const token = req.headers.authorization.split(" ")[1];
-  const userDataString = await redisClient.get(token);
-  if (userDataString) {
-    req.user = JSON.parse(userDataString);
-    next();
-  } else {
-    res.status(401).send("Invalid or expired user key");
+const authUrl = process.env.AUTH_URL || "http://localhost:3001";
+
+const authMiddleware = async (req, res, next) => {
+  const authHeader = req.headers["authorization"];
+  if (!authHeader) return res.status(401).send("Missing authorization header");
+  const token = authHeader.split(" ")[1];
+  let cachedData = await redisClient.get(token);
+  if (cachedData) {
+    return next();
   }
-});
-
-const authorizationMiddleware = (requiredRole) => {
-  return async (req, res, next) => {
-    try {
-      const availableRoles = req.user.realm_access.roles;
-      if (!availableRoles.includes(requiredRole)) throw new Error();
-      next();
-    } catch (err) {
-      res.status(403).send({ error: "access denied" });
-    }
-  };
+  try {
+    const response = await axios.get(`${authUrl}/verifyToken`, {
+      headers: { Authorization: `Bearer ${token}` },
+    });
+    const { data } = response;
+    await redisClient.set(token, JSON.stringify(data));
+    next();
+  } catch (error) {
+    console.log({ error });
+    res.status(401).send("Invalid or expired token");
+  }
 };
 
-app.use(errorHandlingMiddleware);
-app.use(express.json());
+const service1Url = process.env.SERVICE_A_URL || "http://localhost:3002";
 
-app.get("/authenticate", (req, res) => {
-  res.send("success");
-});
+// Set up proxy middleware for each service
 
-app.get("/authorize", authorizationMiddleware("admin1"), (req, res) => {
-  res.send("success");
-});
+app.use(
+  "/api/auth",
+  createProxyMiddleware({
+    target: authUrl,
+    changeOrigin: true,
+    pathRewrite: {
+      "^/api/auth": "",
+    },
+    onProxyReq: (proxyReq, req, res) => {
+      if (req.method === "POST" && req.headers["content-type"]) {
+        proxyReq.setHeader("Content-Type", req.headers["content-type"]);
+      }
+    },
+  })
+);
 
-const port = process.env.PORT || 3002;
+app.use(
+  "/api/crm",
+  authMiddleware,
+  createProxyMiddleware({
+    target: service1Url,
+    changeOrigin: true,
+    pathRewrite: {
+      "^/api/crm": "",
+    },
+    onProxyReq: (proxyReq, req, res) => {
+      if (req.method === "POST" && req.headers["content-type"]) {
+        proxyReq.setHeader("Content-Type", req.headers["content-type"]);
+      }
+    },
+  })
+);
+
+const port = process.env.PORT || 3000;
+
 app.listen(port, () => {
-  console.log(`Auth-service listening on port ${port}`);
+  console.log(`API Gateway listening on port ${port}`);
 });
