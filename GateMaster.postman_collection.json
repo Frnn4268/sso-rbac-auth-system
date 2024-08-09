@@ -1,0 +1,212 @@
+{
+	"info": {
+		"_postman_id": "479ce775-0bfa-4b9d-85c4-e43a581e2393",
+		"name": "GateMaster",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "204779"
+	},
+	"item": [
+		{
+			"name": "Login",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n  \"username\": \"{{app-username}}\",\n  \"password\": \"{{app-user-password}}\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{ssl}}://{{api-gateway}}:{{api-gateway-port}}/api/auth/login",
+					"protocol": "{{ssl}}",
+					"host": [
+						"{{api-gateway}}"
+					],
+					"port": "{{api-gateway-port}}",
+					"path": [
+						"api",
+						"auth",
+						"login"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Verify token",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{ssl}}://{{api-gateway}}:{{api-gateway-port}}/api/auth/verifyToken",
+					"protocol": "{{ssl}}",
+					"host": [
+						"{{api-gateway}}"
+					],
+					"port": "{{api-gateway-port}}",
+					"path": [
+						"api",
+						"auth",
+						"verifyToken"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Refresh Token",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n  \"refreshToken\": \"{{refresh-token}}\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{ssl}}://{{api-gateway}}:{{api-gateway-port}}/api/auth/refreshToken",
+					"protocol": "{{ssl}}",
+					"host": [
+						"{{api-gateway}}"
+					],
+					"port": "{{api-gateway-port}}",
+					"path": [
+						"api",
+						"auth",
+						"refreshToken"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Log out",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n  \"refreshToken\": \"{{refresh-token}}\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{ssl}}://{{api-gateway}}:{{api-gateway-port}}/api/auth/signout",
+					"protocol": "{{ssl}}",
+					"host": [
+						"{{api-gateway}}"
+					],
+					"port": "{{api-gateway-port}}",
+					"path": [
+						"api",
+						"auth",
+						"signout"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Suspend",
+			"request": {
+				"method": "PUT",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n  \"userId\": \"{{app-username}}\",\n  \"adminToken\": \"{{token}}\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{ssl}}://{{api-gateway}}:{{api-gateway-port}}/api/auth/suspend",
+					"protocol": "{{ssl}}",
+					"host": [
+						"{{api-gateway}}"
+					],
+					"port": "{{api-gateway-port}}",
+					"path": [
+						"api",
+						"auth",
+						"suspend"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Corporative app A - Authentication",
+			"request": {
+				"method": "GET",
+				"header": []
+			},
+			"response": []
+		},
+		{
+			"name": "Corporative app A - Authorization",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{ssl}}://{{api-gateway}}:{{api-gateway-port}}/api/corporative-app-a/authorize",
+					"protocol": "{{ssl}}",
+					"host": [
+						"{{api-gateway}}"
+					],
+					"port": "{{api-gateway-port}}",
+					"path": [
+						"api",
+						"corporative-app-a",
+						"authorize"
+					]
+				}
+			},
+			"response": []
+		}
+	],
+	"auth": {
+		"type": "bearer",
+		"bearer": [
+			{
+				"key": "token",
+				"value": "{{token}}",
+				"type": "string"
+			}
+		]
+	},
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"packages": {},
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"packages": {},
+				"exec": [
+					""
+				]
+			}
+		}
+	]
+}
