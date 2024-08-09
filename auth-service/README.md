@@ -5,7 +5,7 @@ This project provides an overview of the Auth Service application built with Exp
 ### Prerequisites
 
 - Node.js
-- Redis
+- Keycloack
 - Docker
 - Docker Compose
 

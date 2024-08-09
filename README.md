@@ -48,7 +48,7 @@ This document provides an overview of a distributed system that implements Singl
 - Verify Token: Verifies the validity of a token if it is not found in the cache.
 
 ## User Suspension
-### 1. Suspension Process:
+### Suspension Process:
 - An admin suspends a user using the “suspend user” route.
 - The Authentication Service disables the user account in Keycloak and evicts the token from the cache.
 - If a suspended user attempts to access protected resources, the API Gateway verifies the token with the Authentication Service.
