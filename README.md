@@ -60,3 +60,20 @@ This document provides an overview of a distributed system that implements Singl
 3. **Security**: Immediate reflection of user suspension and caching of tokens for reduced latency.
 4. **Stateless Authentication**: Ensures scalability and stateless authentication using Keycloak.
 5. **Centralized Cache Management**: Enhances performance and simplifies user data management with Redis.
+
+## Ports
+- Keycloak: 8080
+- Api-Gateway: 8081
+- Auth-Service App: 8083
+- Redis: 6379
+- Apps: 8090
+
+## How to run it
+
+Up the compose
+
+>  docker-compose up --build -d
+
+Down the compose
+
+> docker-compose down 
