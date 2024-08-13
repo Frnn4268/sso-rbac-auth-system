@@ -69,14 +69,29 @@ This document provides an overview of a distributed system that implements Singl
 - Apps: 8090
 
 ## How to run it
+1. Create a `.env` file with your environment variables
 
-Create the folders if you have issues
+2. Create the folders if you have issues:
 
->  mkdir -p ./data ./log ./secrets
 
-Give permissions to the folders
+- Windows: 
+	> mkdir -p ./data, ./log, ./secrets
 
->  sudo chmod -R 777 ./data ./log ./secrets
+- Linux: 
+
+	>  mkdir -p ./data ./log ./secrets
+
+3. Give permissions to the folders
+
+- Windows: 
+
+	>icacls .\data /grant "Everyone:(OI)(CI)F" /T
+	>icacls .\log /grant "Everyone:(OI)(CI)F" /T
+	>icacls .\secrets /grant "Everyone:(OI)(CI)F" /T
+
+- Linux: 
+
+	>  sudo chmod -R 777 ./data ./log ./secrets
 
 Up the compose
 
