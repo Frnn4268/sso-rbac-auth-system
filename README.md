@@ -74,24 +74,24 @@ This document provides an overview of a distributed system that implements Singl
 2. Create the folders if you have issues:
 
 
-- Windows: 
-	> mkdir -p ./data, ./log, ./secrets
+	- Windows: 
+		> mkdir -p ./data, ./log, ./secrets
 
-- Linux: 
+	- Linux: 
 
-	>  mkdir -p ./data ./log ./secrets
+		>  mkdir -p ./data ./log ./secrets
 
 3. Give permissions to the folders
 
-- Windows: 
+	- Windows: 
 
-	>icacls .\data /grant "Everyone:(OI)(CI)F" /T
-	>icacls .\log /grant "Everyone:(OI)(CI)F" /T
-	>icacls .\secrets /grant "Everyone:(OI)(CI)F" /T
+		>icacls .\data /grant "Everyone:(OI)(CI)F" /T
+		>icacls .\log /grant "Everyone:(OI)(CI)F" /T
+		>icacls .\secrets /grant "Everyone:(OI)(CI)F" /T
 
-- Linux: 
+	- Linux: 
 
-	>  sudo chmod -R 777 ./data ./log ./secrets
+		>  sudo chmod -R 777 ./data ./log ./secrets
 
 Up the compose
 
