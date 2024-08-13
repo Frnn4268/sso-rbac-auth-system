@@ -70,6 +70,14 @@ This document provides an overview of a distributed system that implements Singl
 
 ## How to run it
 
+Create the folders if you have issues
+
+>  mkdir -p ./data ./log ./secrets
+
+Give permissions to the folders
+
+>  sudo chmod -R 777 ./data ./log ./secrets
+
 Up the compose
 
 >  docker-compose up --build -d
