@@ -86,7 +86,9 @@ This document provides an overview of a distributed system that implements Singl
 	- Windows: 
 
 		>icacls .\data /grant "Everyone:(OI)(CI)F" /T
+  
 		>icacls .\log /grant "Everyone:(OI)(CI)F" /T
+  
 		>icacls .\secrets /grant "Everyone:(OI)(CI)F" /T
 
 	- Linux: 
