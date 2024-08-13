@@ -69,19 +69,20 @@ This document provides an overview of a distributed system that implements Singl
 - Apps: 8090
 
 ## How to run it
-1. Create a `.env` file with your environment variables
+1. Create a `.env` file with your environment variables.
 
 2. Create the folders if you have issues:
 
 
-	- Windows: 
+	- Windows:
+
 		> mkdir -p ./data, ./log, ./secrets
 
 	- Linux: 
 
 		>  mkdir -p ./data ./log ./secrets
 
-3. Give permissions to the folders
+3. Give permissions to the folders:
 
 	- Windows: 
 
@@ -95,10 +96,10 @@ This document provides an overview of a distributed system that implements Singl
 
 		>  sudo chmod -R 777 ./data ./log ./secrets
 
-Up the compose
+Up the compose:
 
 >  docker-compose up --build -d
 
-Down the compose
+Down the compose:
 
 > docker-compose down 
