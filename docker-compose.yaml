@@ -102,9 +102,17 @@ services:
       - ./data:/var/opt/mssql/data
       - ./log:/var/opt/mssql/log
       - ./secrets:/var/opt/mssql/secrets
-      - ./gate-master.sql:/gate-master.sql
-    command: /bin/bash -c "/opt/mssql/bin/sqlservr & sleep 30 && /opt/mssql-tools/bin/sqlcmd -S localhost -U SA -P ${SQL_SA_PASSWORD} -i /init.sql"
-
+     
+  init-db:
+    image: mcr.microsoft.com/mssql-tools
+    depends_on:
+      - mssql
+    environment:
+      MSSQL_SA_PASSWORD: ${SQL_SA_PASSWORD}
+    volumes:
+      - ./sql/gate-master.sql:/var/opt/mssql/scripts/gate-master.sql
+    entrypoint: /bin/bash -c "sleep 60s && /opt/mssql-tools/bin/sqlcmd -S mssql-db -U SA -P ${SQL_SA_PASSWORD} -d master -i /var/opt/mssql/scripts/gate-master.sql"
+    
 volumes:
   postgres_data:
     driver: local
