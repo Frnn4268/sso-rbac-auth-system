@@ -110,8 +110,8 @@ services:
     environment:
       MSSQL_SA_PASSWORD: ${SQL_SA_PASSWORD}
     volumes:
-      - ./sql/gate-master.sql:/var/opt/mssql/scripts/gate-master.sql
-    entrypoint: /bin/bash -c "sleep 60s && /opt/mssql-tools/bin/sqlcmd -S mssql-db -U SA -P ${SQL_SA_PASSWORD} -d master -i /var/opt/mssql/scripts/gate-master.sql"
+      - ./sql/init-data.sql:/var/opt/mssql/scripts/init-data.sql
+    entrypoint: /bin/bash -c "sleep 60s && /opt/mssql-tools/bin/sqlcmd -S mssql-db -U SA -P ${SQL_SA_PASSWORD} -d master -i /var/opt/mssql/scripts/init-data.sql"
     
 volumes:
   postgres_data:
