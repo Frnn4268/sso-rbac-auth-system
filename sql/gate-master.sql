@@ -1,6 +1,7 @@
 -- Drop database if it exists
 USE master;
 GO
+
 DROP DATABASE IF EXISTS [gate-master];
 GO
 
@@ -13,9 +14,22 @@ USE [gate-master];
 GO
 
 -- Create tables
+CREATE TABLE [tbl_App] (
+  [app_id] BIGINT PRIMARY KEY,
+  [app_name] VARCHAR(30),
+  [app_description] VARCHAR(50),
+  [app_version] VARCHAR(15),
+  [created_by] VARCHAR(20),
+  [created_on] DATE,
+  [updated_by] VARCHAR(20),
+  [updated_on] DATE
+);
+GO
+
 CREATE TABLE [tbl_Module] (
   [module_id] BIGINT PRIMARY KEY,
-  [name] VARCHAR(255),
+  [app_id] BIGINT,
+  [name] VARCHAR(30),
   [active] BIT,
   [created_by] VARCHAR(20),
   [created_on] DATE,
@@ -26,7 +40,8 @@ GO
 
 CREATE TABLE [tbl_User_history] (
   [history_number] INT PRIMARY KEY IDENTITY(1, 1),
-  [user_id] uniqueidentifier,
+  [user_id] UNIQUEIDENTIFIER,
+  [allow] BIT,
   [username] VARCHAR(20),
   [first_name] VARCHAR(20),
   [last_name] VARCHAR(20),
@@ -42,7 +57,7 @@ GO
 
 CREATE TABLE [tbl_Audit_User] (
   [histoy_id] INT PRIMARY KEY IDENTITY(1, 1),
-  [user_id] uniqueidentifier,
+  [user_id] UNIQUEIDENTIFIER,
   [effective_date] DATE,
   [module_affected] BIGINT,
   [resourse_affected] BIGINT,
@@ -52,7 +67,8 @@ CREATE TABLE [tbl_Audit_User] (
 GO
 
 CREATE TABLE [tbl_User] (
-  [user_id] uniqueidentifier PRIMARY KEY DEFAULT NEWID(),
+  [user_id] UNIQUEIDENTIFIER PRIMARY KEY DEFAULT NEWID(),
+  [allow] BIT,
   [username] VARCHAR(20),
   [first_name] VARCHAR(20),
   [last_name] VARCHAR(20),
@@ -100,10 +116,10 @@ CREATE TABLE [tbl_Resource] (
 );
 GO
 
-CREATE TABLE [tbl_User_Module] (
-  [user_module_id] BIGINT PRIMARY KEY,
-  [user_id] uniqueidentifier,
-  [module_id] BIGINT,
+CREATE TABLE [tbl_User_App] (
+  [user_app_id] BIGINT PRIMARY KEY,
+  [user_id] UNIQUEIDENTIFIER,
+  [app_id] BIGINT,
   [created_by] VARCHAR(20),
   [created_on] DATE,
   [updated_by] VARCHAR(20),
@@ -113,7 +129,7 @@ GO
 
 CREATE TABLE [tbl_User_Role] (
   [user_role_id] BIGINT PRIMARY KEY,
-  [user_id] uniqueidentifier,
+  [user_id] UNIQUEIDENTIFIER,
   [role_id] BIGINT,
   [created_by] VARCHAR(20),
   [created_on] DATE,
@@ -167,56 +183,63 @@ CREATE TABLE [tbl_Module_Resource] (
 GO
 
 CREATE TABLE [tbl_Sessions] (
-  [Session_id] INT PRIMARY KEY IDENTITY(1, 1),
-  [User_id] uniqueidentifier,
+  [Session_id] INTEGER PRIMARY KEY IDENTITY(1, 1),
+  [User_id] UNIQUEIDENTIFIER,
   [Session_at] DATETIME DEFAULT GETDATE(),
   [Session_from] VARCHAR(100),
-  [Session_duration] INT
+  [Session_duration] TIMESTAMP,
+  [created_by] VARCHAR(20),
+  [created_on] DATE,
+  [updated_by] VARCHAR(20),
+  [updated_on] DATE
 );
 GO
 
 -- Add foreign keys
-ALTER TABLE [tbl_User_history] ADD FOREIGN KEY ([user_id]) REFERENCES [tbl_User] ([user_id]);
+ALTER TABLE [tbl_Module] ADD FOREIGN KEY ([app_id]) REFERENCES [tbl_App] ([app_id])
 GO
 
-ALTER TABLE [tbl_Audit_User] ADD FOREIGN KEY ([user_id]) REFERENCES [tbl_User] ([user_id]);
+ALTER TABLE [tbl_User_history] ADD FOREIGN KEY ([user_id]) REFERENCES [tbl_User] ([user_id])
 GO
 
-ALTER TABLE [tbl_User_Module] ADD FOREIGN KEY ([user_id]) REFERENCES [tbl_User] ([user_id]);
+ALTER TABLE [tbl_Audit_User] ADD FOREIGN KEY ([user_id]) REFERENCES [tbl_User] ([user_id])
 GO
 
-ALTER TABLE [tbl_User_Module] ADD FOREIGN KEY ([module_id]) REFERENCES [tbl_Module] ([module_id]);
+ALTER TABLE [tbl_User_App] ADD FOREIGN KEY ([user_id]) REFERENCES [tbl_User] ([user_id])
 GO
 
-ALTER TABLE [tbl_User_Role] ADD FOREIGN KEY ([user_id]) REFERENCES [tbl_User] ([user_id]);
+ALTER TABLE [tbl_User_App] ADD FOREIGN KEY ([app_id]) REFERENCES [tbl_App] ([app_id])
 GO
 
-ALTER TABLE [tbl_User_Role] ADD FOREIGN KEY ([role_id]) REFERENCES [tbl_Role] ([role_id]);
+ALTER TABLE [tbl_User_Role] ADD FOREIGN KEY ([user_id]) REFERENCES [tbl_User] ([user_id])
 GO
 
-ALTER TABLE [tbl_Role_Role] ADD FOREIGN KEY ([parent_role_id]) REFERENCES [tbl_Role] ([role_id]);
+ALTER TABLE [tbl_User_Role] ADD FOREIGN KEY ([role_id]) REFERENCES [tbl_Role] ([role_id])
 GO
 
-ALTER TABLE [tbl_Role_Role] ADD FOREIGN KEY ([child_role_id]) REFERENCES [tbl_Role] ([role_id]);
+ALTER TABLE [tbl_Role_Role] ADD FOREIGN KEY ([parent_role_id]) REFERENCES [tbl_Role] ([role_id])
 GO
 
-ALTER TABLE [tbl_Role_Permission] ADD FOREIGN KEY ([role_id]) REFERENCES [tbl_Role] ([role_id]);
+ALTER TABLE [tbl_Role_Role] ADD FOREIGN KEY ([child_role_id]) REFERENCES [tbl_Role] ([role_id])
 GO
 
-ALTER TABLE [tbl_Role_Permission] ADD FOREIGN KEY ([permission_id]) REFERENCES [tbl_Permission] ([permission_id]);
+ALTER TABLE [tbl_Role_Permission] ADD FOREIGN KEY ([role_id]) REFERENCES [tbl_Role] ([role_id])
 GO
 
-ALTER TABLE [tbl_Permission_Resource] ADD FOREIGN KEY ([permission_id]) REFERENCES [tbl_Permission] ([permission_id]);
+ALTER TABLE [tbl_Role_Permission] ADD FOREIGN KEY ([permission_id]) REFERENCES [tbl_Permission] ([permission_id])
 GO
 
-ALTER TABLE [tbl_Permission_Resource] ADD FOREIGN KEY ([resource_id]) REFERENCES [tbl_Resource] ([resource_id]);
+ALTER TABLE [tbl_Permission_Resource] ADD FOREIGN KEY ([permission_id]) REFERENCES [tbl_Permission] ([permission_id])
 GO
 
-ALTER TABLE [tbl_Module_Resource] ADD FOREIGN KEY ([department_id]) REFERENCES [tbl_Module] ([module_id]);
+ALTER TABLE [tbl_Permission_Resource] ADD FOREIGN KEY ([resource_id]) REFERENCES [tbl_Resource] ([resource_id])
 GO
 
-ALTER TABLE [tbl_Module_Resource] ADD FOREIGN KEY ([resource_id]) REFERENCES [tbl_Resource] ([resource_id]);
+ALTER TABLE [tbl_Module_Resource] ADD FOREIGN KEY ([department_id]) REFERENCES [tbl_Module] ([module_id])
 GO
 
-ALTER TABLE [tbl_Sessions] ADD FOREIGN KEY ([User_id]) REFERENCES [tbl_User] ([user_id]);
+ALTER TABLE [tbl_Module_Resource] ADD FOREIGN KEY ([resource_id]) REFERENCES [tbl_Resource] ([resource_id])
+GO
+
+ALTER TABLE [tbl_Sessions] ADD FOREIGN KEY ([User_id]) REFERENCES [tbl_User] ([user_id])
 GO

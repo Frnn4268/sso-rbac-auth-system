@@ -99,9 +99,9 @@ services:
     ports: 
       - "1433:1433"
     volumes:
-      - ./data:/var/opt/mssql/data
-      - ./log:/var/opt/mssql/log
-      - ./secrets:/var/opt/mssql/secrets
+      - ./sql/data:/var/opt/mssql/data
+      - ./sql/log:/var/opt/mssql/log
+      - ./sql/secrets:/var/opt/mssql/secrets
      
   init-db:
     image: mcr.microsoft.com/mssql-tools
