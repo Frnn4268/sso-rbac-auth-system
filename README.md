@@ -96,10 +96,10 @@ This document provides an overview of a distributed system that implements Singl
 
 		>  sudo chmod -R 777 ./data ./log ./secrets
 
-Up the compose:
+4. Up the compose:
 
->  docker-compose up --build -d
+	>  docker-compose up --build -d
 
-Down the compose:
+5. Down the compose:
 
-> docker-compose down 
+	> docker-compose down 
