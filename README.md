@@ -80,7 +80,7 @@ This document provides an overview of a distributed system that implements Singl
 
 	- Linux: 
 
-		>  mkdir -p ./data ./log ./secrets
+		>  sudo mkdir -p ./sql/data ./sql/log ./sql/secrets
 
 3. Give permissions to the folders:
 
@@ -94,7 +94,7 @@ This document provides an overview of a distributed system that implements Singl
 
 	- Linux: 
 
-		>  sudo chmod -R 777 ./data ./log ./secrets
+		>  sudo chmod -R 777 ./sql/data ./sql/log ./sql/secrets
 
 4. Up the compose:
 
