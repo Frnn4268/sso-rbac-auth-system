@@ -4,17 +4,21 @@ services:
   
   postgres:
     image: postgres:16.2
+    # Mounts the PostgreSQL data directory to persist data
     volumes:
       - postgres_data:/var/lib/postgresql/data
     environment:
+      # Environment variables for PostgreSQL configuration
       POSTGRES_DB: ${POSTGRES_DB}
       POSTGRES_USER: ${POSTGRES_USER}
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
 
   keycloak:
     image: quay.io/keycloak/keycloak:23.0.6
+    # Starts the Keycloak server with a specific command
     command: start
     environment:
+      # Environment variables for Keycloak configuration
       KC_HOSTNAME: ${KEYCLOAK_HOSTNAME}
       KC_HOSTNAME_PORT: ${KEYCLOAK_PORT}
       KC_HOSTNAME_STRICT_BACKCHANNEL: 'false'
@@ -28,62 +32,78 @@ services:
       KC_DB_USERNAME: ${POSTGRES_USER}
       KC_DB_PASSWORD: ${POSTGRES_PASSWORD}
     ports:
+      # Exposes Keycloak on port 8080
       - 8080:8080
+    # Restarts the container automatically on failure
     restart: always
+    # Ensures Keycloak starts after PostgreSQL
     depends_on:
       - postgres
 
   redis:
     image: redis:alpine
+    # Exposes Redis on port 6379
     ports:
       - "6379:6379"
 
   api-gateway:
     image: api-gateway:latest
+    # Builds the API Gateway from the specified Dockerfile
     build:
       context: ./api-gateway
       dockerfile: Dockerfile
     ports:
+      # Exposes the API Gateway on port 8081
       - "8081:8081"
     environment:
+      # Environment variables for API Gateway configuration
       - PORT=8081
       - REDIS_HOST=${REDIS_HOST}
       - REDIS_PORT=${REDIS_PORT}
       - AUTH_URL=${AUTH_URL}
       - SERVICE_A_URL=${SERVICE_A_URL}
     depends_on:
+      # Ensures API Gateway starts after Redis and Keycloak
       - redis
       - keycloak
 
   auth-service:
     image: auth-service:latest
+    # Builds the Auth Service from the specified Dockerfile
     build:
       context: ./auth-service
       dockerfile: Dockerfile
     ports:
+      # Exposes the Auth Service on port 8083
       - "8083:8083"
     environment:
+      # Environment variables for Auth Service configuration
       - PORT=8083
       - KEYCLOAK_AUTH_SERVER_URL=${KEYCLOAK_AUTH_SERVER_URL}
       - KEYCLOAK_REALM=${KEYCLOAK_REALM}
       - KEYCLOAK_CLIENT_ID=${KEYCLOAK_CLIENT_ID_APP}
       - KEYCLOAK_CLIENT_SECRET=${KEYCLOAK_CLIENT_SECRET}
     depends_on:
+      # Ensures Auth Service starts after Keycloak and API Gateway
       - keycloak
       - api-gateway
   
   crm:
     image: crm:latest
+    # Builds the CRM service from the specified Dockerfile
     build:
       context: ./crm
       dockerfile: Dockerfile
     ports:
+      # Exposes the CRM service on port 8090
       - "8090:8090"
     environment:
+      # Environment variables for CRM configuration
       - PORT=8090
       - REDIS_HOST=${REDIS_HOST}
       - REDIS_PORT=${REDIS_PORT}
     depends_on:
+      # Ensures CRM starts after the Auth Service
       - auth-service
 
   mssql:
@@ -91,29 +111,36 @@ services:
     hostname: mssql-db
     image: mcr.microsoft.com/mssql/server:2022-latest
     environment:
+      # Environment variables for MSSQL configuration
       ACCEPT_EULA: 'Y'
       MSSQL_SA_PASSWORD: ${SQL_SA_PASSWORD}
       MSSQL_DATA_DIR: /var/opt/mssql/data
       MSSQL_PID: 'Developer' 
       MSSQL_TCP_PORT: ${SQL_PORT} 
     ports: 
+       # Exposes MSSQL on port 1433
       - "1433:1433"
+    # Mounts directories to persist MSSQL data, logs, and secrets
     volumes:
-      - ./data:/var/opt/mssql/data
-      - ./log:/var/opt/mssql/log
-      - ./secrets:/var/opt/mssql/secrets
+      - ./sql/data:/var/opt/mssql/data
+      - ./sql/log:/var/opt/mssql/log
+      - ./sql/secrets:/var/opt/mssql/secrets
      
   init-db:
     image: mcr.microsoft.com/mssql-tools
     depends_on:
+      # Ensures init-db starts after MSSQL is ready
       - mssql
     environment:
       MSSQL_SA_PASSWORD: ${SQL_SA_PASSWORD}
     volumes:
+      # Mounts SQL scripts for database initialization
       - ./sql/gate-master.sql:/var/opt/mssql/scripts/gate-master.sql
       - ./sql/init-data.sql:/var/opt/mssql/scripts/init-data.sql
+    # Executes SQL scripts after a delay to ensure MSSQL is ready
     entrypoint: /bin/bash -c "sleep 60s && /opt/mssql-tools/bin/sqlcmd -S mssql-db -U SA -P ${SQL_SA_PASSWORD} -d master -i /var/opt/mssql/scripts/gate-master.sql && /opt/mssql-tools/bin/sqlcmd -S mssql-db -U SA -P ${SQL_SA_PASSWORD} -d master -i /var/opt/mssql/scripts/init-data.sql"
 
+# Defines a named volume to persist PostgreSQL data
 volumes:
   postgres_data:
     driver: local
