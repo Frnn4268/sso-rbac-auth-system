@@ -76,7 +76,7 @@ This document provides an overview of a distributed system that implements Singl
 
 	- Windows:
 
-		> mkdir -p ./data, ./log, ./secrets
+		> mkdir -p ./sql/data, ./sql/log, ./sql/secrets
 
 	- Linux: 
 
@@ -86,11 +86,11 @@ This document provides an overview of a distributed system that implements Singl
 
 	- Windows: 
 
-		>icacls .\data /grant "Everyone:(OI)(CI)F" /T
+		>icacls .\sql\data /grant "Everyone:(OI)(CI)F" /T
   
-		>icacls .\log /grant "Everyone:(OI)(CI)F" /T
+		>icacls .\sql\log /grant "Everyone:(OI)(CI)F" /T
   
-		>icacls .\secrets /grant "Everyone:(OI)(CI)F" /T
+		>icacls .\sql\secrets /grant "Everyone:(OI)(CI)F" /T
 
 	- Linux: 
 
