@@ -93,10 +93,10 @@ This document provides an overview of a distributed system that implements Singl
    		```
 		icacls .\sql\data /grant "Everyone:(OI)(CI)F" /T
   
-		>icacls .\sql\log /grant "Everyone:(OI)(CI)F" /T
+		icacls .\sql\log /grant "Everyone:(OI)(CI)F" /T
   
-		>icacls .\sql\secrets /grant "Everyone:(OI)(CI)F" /T
-     		```
+		icacls .\sql\secrets /grant "Everyone:(OI)(CI)F" /T
+   		```
 
 	- Linux: 
 
