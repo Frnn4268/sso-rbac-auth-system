@@ -76,30 +76,42 @@ This document provides an overview of a distributed system that implements Singl
 
 	- Windows:
 
-		> mkdir -p ./sql/data, ./sql/log, ./sql/secrets
+		```
+		mkdir -p ./sql/data, ./sql/log, ./sql/secrets
+  		```
 
-	- Linux: 
+	- Linux:
 
-		>  sudo mkdir -p ./sql/data ./sql/log ./sql/secrets
+		```
+		sudo mkdir -p ./sql/data ./sql/log ./sql/secrets
+		```
 
 3. Give permissions to the folders:
 
 	- Windows: 
 
-		>icacls .\sql\data /grant "Everyone:(OI)(CI)F" /T
+   		```
+		icacls .\sql\data /grant "Everyone:(OI)(CI)F" /T
   
 		>icacls .\sql\log /grant "Everyone:(OI)(CI)F" /T
   
 		>icacls .\sql\secrets /grant "Everyone:(OI)(CI)F" /T
+     		```
 
 	- Linux: 
 
-		>  sudo chmod -R 777 ./sql/data ./sql/log ./sql/secrets
+		```
+		sudo chmod -R 777 ./sql/data ./sql/log ./sql/secrets
+  		```
 
-4. Up the compose:
+5. Up the compose:
 
-	>  docker-compose up --build -d
+	```
+	docker-compose up --build -d
+ 	```
 
-5. Down the compose:
+6. Down the compose:
 
-	> docker-compose down 
+ 	```
+	docker-compose down
+  	```
