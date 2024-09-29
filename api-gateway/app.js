@@ -26,7 +26,7 @@ const apiLimiter = rateLimit({
 });
 app.use(apiLimiter);
 
-const authUrl = "http://localhost:3001";
+const authUrl = process.env.AUTH_URL || "http://localhost:3001";
 
 const authMiddleware = async (req, res, next) => {
   const authHeader = req.headers["authorization"];
@@ -49,7 +49,7 @@ const authMiddleware = async (req, res, next) => {
   }
 };
 
-const service1Url = "http://localhost:3002";
+const serviceCRMURL = process.env.SERVICE_CRM_URL || "http://localhost:3002";
 
 // Set up proxy middleware for each service
 
@@ -70,13 +70,13 @@ app.use(
 );
 
 app.use(
-  "/api/service1",
+  "/api/crm",
   authMiddleware,
   createProxyMiddleware({
-    target: service1Url,
+    target: serviceCRMURL,
     changeOrigin: true,
     pathRewrite: {
-      "^/api/service1": "",
+      "^/api/crm": "",
     },
     onProxyReq: (proxyReq, req, res) => {
       if (req.method === "POST" && req.headers["content-type"]) {
