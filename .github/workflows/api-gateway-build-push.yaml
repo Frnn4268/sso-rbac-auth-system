@@ -31,4 +31,4 @@ jobs:
           context: .
           file: ./api-gateway/Dockerfile
           push: true
-          tags: umg100/api-gateway:${{github.run_number}}
+          tags: frnn4268/api-gateway:${{github.run_number}}

@@ -31,4 +31,4 @@ jobs:
           context: .
           file: ./auth-service/Dockerfile
           push: true
-          tags: umg100/auth-service:${{github.run_number}}
+          tags: frnn4268/auth-service:${{github.run_number}}

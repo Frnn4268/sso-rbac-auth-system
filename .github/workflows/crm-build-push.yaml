@@ -31,4 +31,4 @@ jobs:
           context: .
           file: ./crm/Dockerfile
           push: true
-          tags: umg100/crm:${{github.run_number}}
+          tags: frnn4268/crm:${{github.run_number}}
