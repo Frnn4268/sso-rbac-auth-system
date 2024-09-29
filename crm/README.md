@@ -1,4 +1,4 @@
-# Authentication Service - Service A
+# Authentication Service - CRM
 
 This is an authentication service built with Express, Redis, and dotenv. It provides middleware for token validation and role-based authorization.
 
